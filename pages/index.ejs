@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title><%= title %></title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <% if (created) { %>
+        <div class="alert alert-success">Заметка была добавлена</div>
+        <% } %>
+        <div class="container">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h1><%= title %></h1>
+                </div>
+
+                <form action="/" method="post" class="mb-3">
+                    <div class="form-group mb-3">
+                        <label for="title" class="form-label">Заголовок</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="title"
+                            name="title"
+                            required
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Добавить
+                    </button>
+                </form>
+            </div>
+
+            <% if (notes.length > 0) { %>
+            <div class="card mt-3">
+                <ul class="list-group">
+                    <% for (let note of notes) { %>
+                    <li
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                        <span><%= note.title %></span>
+                        <div class="d-flex align-items-center">
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-sm me-2"
+                                data-type="update"
+                                data-id="<%= note.id%>"
+                            >
+                                Редактировать
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-danger btn-sm"
+                                data-type="delete"
+                                data-id="<%= note.id%>"
+                            >
+                                Удалить
+                            </button>
+                        </div>
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+            <% } else { %>
+            <div class="alert alert-warning">Заметок нет</div>
+            <% } %>
+        </div>
+        <script src="/app.js"></script>
+    </body>
+</html>

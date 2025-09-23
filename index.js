@@ -1,45 +1,44 @@
-const yargs = require('yargs');
-const pkg = require('./package.json');
-const { addNote, printNotes, removeNote } = require('./notes.controller');
+const express = require('express');
+const chalk = require('chalk');
+const path = require('path');
+const {
+    addNote,
+    getNotes,
+    removeNote,
+    updateNote,
+} = require('./notes.controller');
 
-yargs.version(pkg.version);
+const app = express();
+app.set('view engine', 'ejs');
+app.set('views', 'pages');
 
-yargs.command({
-    command: 'add',
-    describe: 'Add a new note',
-    builder: {
-        title: {
-            describe: 'Note title',
-            demandOption: true,
-            type: 'string',
-        },
-    },
-    handler({ title }) {
-        addNote(title);
-    },
+const port = 3000;
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(path.resolve(__dirname, 'public')));
+
+app.get('/', async (req, res) => {
+    res.render('index', {
+        title: 'Главная страница',
+        notes: await getNotes(),
+        created: Boolean(req.query.created),
+    });
+});
+app.post('/', async (req, res) => {
+    await addNote(req.body.title);
+    res.redirect('/?created=1');
+});
+app.delete('/:id', async (req, res) => {
+    await removeNote(req.params.id);
+    res.status(200).json({ ok: true });
 });
 
-yargs.command({
-    command: 'list',
-    describe: 'List all notes',
-    async handler() {
-        printNotes();
-    },
+app.put('/:id', async (req, res) => {
+    await updateNote(req.params.id, req.body.title);
+    res.status(200).json({ ok: true });
 });
 
-yargs.command({
-    command: 'remove',
-    describe: 'Remove a note',
-    builder: {
-        id: {
-            describe: 'Note id',
-            demandOption: true,
-            type: 'string',
-        },
-    },
-    handler({ id }) {
-        removeNote(id);
-    },
+app.listen(port, () => {
+    console.log(chalk.bgBlue(`Server is running on port ${port}`));
 });
-
-yargs.parse();
