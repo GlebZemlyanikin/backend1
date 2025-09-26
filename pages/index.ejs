@@ -12,7 +12,9 @@
         />
     </head>
     <body>
-        <% if (created) { %>
+        <% if (userEmail) { %> <%- include('./partials/user-header') %> <% }
+        else { %> <%- include('./partials/guest-header') %> <% } %> <% if
+        (created) { %>
         <div class="alert alert-success">Заметка была добавлена</div>
         <% } %> <% if (error) { %>
         <div class="alert alert-danger">Произошла ошибка</div>
@@ -48,7 +50,9 @@
                         class="list-group-item d-flex justify-content-between align-items-center"
                     >
                         <span><%= note.title %></span>
-                        <div class="d-flex align-items-center">
+                        <span><%= note.owner %></span>
+                        <% if (userEmail === note.owner) { %>
+                        <div class="d-flex align-items-center gap-2">
                             <button
                                 type="button"
                                 class="btn btn-primary btn-sm me-2"
@@ -66,6 +70,7 @@
                                 Удалить
                             </button>
                         </div>
+                        <% } %>
                     </li>
                     <% } %>
                 </ul>
